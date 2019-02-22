@@ -1,0 +1,38 @@
+{
+	"manifest-version": 1,
+
+	"name": "app-audit",
+	"docker-image":"app-audit",
+	"docker-registry":"databoxdev",
+	"docker-image-tag":"dev",
+	"databox-type": "app",
+	"version": "0.5.2",
+
+	"description": "An experimental app to audit other app/driver activities.",
+	"author": "Chris Greenhalgh <chris.greenhalgh@nottingham.ac.uk>",
+	"license": "MIT",
+	"tags": [
+		"app",
+		"databox"
+	],
+
+	"homepage": "https://github.com/cgreenhalgh/app-audit",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/cgreenhalgh/app-audit/"
+	},
+	"datasources": [
+		{
+			"type": "databox-test:testdata",
+			"required": true,
+			"name": "databox-test:testdata",
+			"clientid": "testdata",
+			"granularities": []
+		}
+	],
+
+	"export-whitelist": [],
+
+	"resource-requirements": {}
+
+}
