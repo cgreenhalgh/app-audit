@@ -23,10 +23,10 @@
 	},
 	"datasources": [
 		{
-			"type": "databox-test:testdata",
+			"type": "databox:container-manager:api",
 			"required": true,
-			"name": "databox-test:testdata",
-			"clientid": "testdata",
+			"name": "databox:container-manager:api",
+			"clientid": "cmapi",
 			"granularities": []
 		}
 	],

@@ -25,24 +25,24 @@ func main() {
 	DataboxTestMode := os.Getenv("DATABOX_VERSION") == ""
 
 	//Read in the information on the datasources that databox passed to the app
-	var testDataSource libDatabox.DataSourceMetadata
+	var cmapiDataSource libDatabox.DataSourceMetadata
 	var storeEndpoint string
 	var storeClient *libDatabox.CoreStoreClient
 	httpServerPort := "8080"
 	if DataboxTestMode {
-		libDatabox.Warn("Missing DATASOURCE_TESTDATA assuming we are outside of databox")
+		libDatabox.Warn("Missing DATASOURCE_cmapi assuming we are outside of databox - this probably won't work with this app!")
 		storeEndpoint = testStoreEndpoint
 		httpServerPort = "8081" //this is needed to avoid collisions with the driver you can use any free port
 		//Fake the datasource information which we would normally get from databox as an env var
-		testDataSource = libDatabox.DataSourceMetadata{
-			Description:    "A test datasource",        //required
-			ContentType:    libDatabox.ContentTypeJSON, //required
-			Vendor:         "databox-test",             //required
-			DataSourceType: "testData",                 //required
-			DataSourceID:   "testdata1",                //required
-			StoreType:      libDatabox.StoreTypeTSBlob, //required
-			IsActuator:     false,
-			IsFunc:         false,
+		cmapiDataSource = libDatabox.DataSourceMetadata{
+			Description:    "Databox container manager API",
+			ContentType:    "application/json",
+			Vendor:         "Databox",
+			DataSourceType: "databox:container-manager:api",
+			DataSourceID:   "api",
+			StoreType:      "kv",
+			IsActuator:     true,
+			//IsFunc:         false,
 		}
 		//turn on debug output for the databox library
 		libDatabox.OutputDebug(true)
@@ -52,7 +52,7 @@ func main() {
 	} else {
 		//This is the standard setup for inside databox
 		var err error
-		testDataSource, storeEndpoint, err = libDatabox.HypercatToDataSourceMetadata(os.Getenv("DATASOURCE_testdata"))
+		cmapiDataSource, storeEndpoint, err = libDatabox.HypercatToDataSourceMetadata(os.Getenv("DATASOURCE_cmapi"))
 		libDatabox.ChkErr(err)
 		// Set up a store client you will need one of these per store
 		// if you asked for more then one data source in your manifest
@@ -63,7 +63,7 @@ func main() {
 	//The endpoints and routing for the app UI
 	router := mux.NewRouter()
 	router.HandleFunc("/status", statusEndpoint).Methods("GET")
-	router.HandleFunc("/ui/getData", getData(testDataSource, storeClient)).Methods("GET")
+	router.HandleFunc("/ui/getData", getData(cmapiDataSource, storeClient)).Methods("GET")
 	router.HandleFunc("/ui/crash", crashApp).Methods("GET")
 	router.HandleFunc("/ui/qstest", qstest).Methods("GET")
 	router.PathPrefix("/ui").Handler(http.StripPrefix("/ui", http.FileServer(http.Dir("./static"))))
@@ -96,17 +96,9 @@ func getData(dataSource libDatabox.DataSourceMetadata, store *libDatabox.CoreSto
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		//read the latest value from the store
-		//the store retunes a json string of the form [{"timestamp":1538464315931,"data":{"data":"44"}}]
-		latest, err := store.TSBlobJSON.Latest(dataSource.DataSourceID)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			fmt.Fprintf(w, `{"status":500,"data":"%s"}`, err.Error())
-			return
-		}
-
-		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, `%s`, latest)
+		// API store is KV but only really observable, so sort this out in the future...
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, `{"status":500,"data":"%s"}`, "Unimplemented")
 
 	}
 }
