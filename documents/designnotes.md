@@ -101,6 +101,17 @@ Or permission to get or monitor a store's hypercat (e.g. for dynamic datasources
 Is this a function call on the CM used by the audit app?
 Or is it a special host wildcard permission??
 
+FWIW the arbiter and core store probably already accept "*" for the host, to match any core store.
+So it would just need a way for
+- the manifest to request it
+- the core-ui to approve it
+- the CM to grant it
+
+For normal datasources the core-ui uses type to identify possible datasource IDs, and fills this in in the manifest/prototype SLA.
+Maybe it should be a new "special permissions" section (host, path, method, observe (optional))?
+Maybe a pre-defined list of well-defined options, e.g. "Audit any datasource", "Read any datasource catalogue"?
+(It doesn't really fit the current datasources section.)
+
 ## Use Cases
 
 ### Platform audit
