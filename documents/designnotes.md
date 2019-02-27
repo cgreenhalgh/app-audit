@@ -83,6 +83,21 @@ Store type `kv`, content type `json`
 
 Key = SLA `Name`, value is [libDatabox.SLA](https://github.com/me-box/lib-go-databox/blob/master/types.go#L105)
 
+### CM ListAllDatasources function
+
+Type `databox:func:ListAllDatasources`, returns []libDatabox.HypercatItem.
+
+Could be given permission from Manifest (I think).
+No way to know if it has settled or changed though.
+Gets Hypercat root from arbiter. I think this depends on CM's special status with arbiter.
+Iterates Items and gets Store Datasource Catalogue. This CM GET /cat permission is installed for every new app/driver's store.
+
+Not very efficient to keep polling...
+
+And what about permission to audit once you know a datasource exists?
+Or permission to get or monitor a store's hypercat (e.g. for dynamic datasources)?
+Is this a function call on the CM used by the audit app?
+Or is it a special host wildcard permission??
 
 ## Use Cases
 
