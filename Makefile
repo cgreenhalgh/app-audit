@@ -1,5 +1,5 @@
 IMAGE_NAME=app-audit
-DEFAULT_REG=databoxdev
+DEFAULT_REG=cgreenhalgh
 VERSION=0.5.2
 
 .PHONY: all
