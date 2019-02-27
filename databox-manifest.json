@@ -33,6 +33,12 @@
 			"required": true,
 			"clientid": "cmslas",
 			"granularities": []
+		},
+		{
+			"type": "databox:func:ListAllDatasources",
+			"required": true,
+			"clientid": "listdss",
+			"granularities": []
 		}
 	],
 

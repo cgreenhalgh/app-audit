@@ -66,6 +66,15 @@ func main() {
 	libDatabox.ChkErr(err)
 	cmslasStoreClient = libDatabox.NewDefaultCoreStoreClient(cmslasStoreEndpoint)
 
+	// Container Manager ListAllDatasources function
+	var cmlistdssDataSource libDatabox.DataSourceMetadata
+	var cmlistdssStoreEndpoint string
+	var cmlistdssStoreClient *libDatabox.CoreStoreClient
+	libDatabox.Info("Listdss: " + os.Getenv("DATASOURCE_listdss") )
+	cmlistdssDataSource, cmlistdssStoreEndpoint, err = libDatabox.HypercatToDataSourceMetadata(os.Getenv("DATASOURCE_listdss"))
+	libDatabox.ChkErr(err)
+	cmlistdssStoreClient = libDatabox.NewDefaultCoreStoreClient(cmlistdssStoreEndpoint)
+
 	//The endpoints and routing for the app UI
 	router := mux.NewRouter()
 	router.HandleFunc("/status", statusEndpoint).Methods("GET")
@@ -76,7 +85,8 @@ func main() {
 
 	go getSLAs(cmslasStoreClient, cmslasDataSource.DataSourceID)
 	go monitorCmapi(cmapiStoreClient, cmapiDataSource.DataSourceID)
-
+	go listAllDatasources(cmlistdssStoreClient, cmlistdssDataSource.DataSourceID)
+	
 	//setup webserver
 	setUpWebServer(DataboxTestMode, router, httpServerPort)
 
@@ -218,4 +228,21 @@ func monitorCmapi(cmapiStoreClient *libDatabox.CoreStoreClient, cmapiID string) 
 			}
 		}
 	}
+}
+
+func listAllDatasources(cmlistdssStoreClient *libDatabox.CoreStoreClient, cmlistdssID string) {
+	respChan, err := cmlistdssStoreClient.FUNC.Call(cmlistdssID, []byte{}, libDatabox.ContentTypeJSON)
+	if err != nil {
+		libDatabox.Err("listAllDatasources error. " + err.Error() )
+		return
+	}
+
+	resp := <-respChan
+
+	if resp.Status != libDatabox.FuncStatusOK {
+		libDatabox.Err("listAllDatasources error status." )
+		return
+	}
+
+	libDatabox.Info("listAllDatasources: " + string( resp.Response[:] ) )
 }

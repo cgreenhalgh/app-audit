@@ -94,6 +94,8 @@ Iterates Items and gets Store Datasource Catalogue. This CM GET /cat permission 
 
 Not very efficient to keep polling...
 
+Note: current fails with permission error, see [#315](https://github.com/me-box/databox/issues/315)
+
 And what about permission to audit once you know a datasource exists?
 Or permission to get or monitor a store's hypercat (e.g. for dynamic datasources)?
 Is this a function call on the CM used by the audit app?
