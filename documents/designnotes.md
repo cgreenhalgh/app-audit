@@ -60,6 +60,30 @@ Persists (e.g.) SLAs (under slaStore/NAME), certificates (under data/cert.pem & 
 
 Container manager includes HTTPS reverse proxy, which forwards requests to core-ui, apps and drivers. Doesn’t obviously log anything at the moment.
 
+### CM API datasource
+
+Type `databox:container-manager:api`.
+
+defined in [cmZestAPI.go](https://github.com/me-box/core-container-manager/blob/master/cmZestAPI.go),
+
+Store type `kv`, content type `application/json`.
+
+Keys:
+- `install`, expect JSON object w `manifest` = libDatabox.Manifest (although it is a manifest it is ready to become an SLA, e.g. datasource IDs and hrefs are present)
+- `uninstall`, expect JSON object w `name` = string
+- `restart`, expect JSON object w `name` = string
+
+### CM SLA datasource
+
+Defined in [gmStoreClient.go](https://github.com/me-box/core-container-manager/blob/master/cmStoreClient.go)
+
+Type `databox:container-manager:SLA`
+
+Store type `kv`, content type `json`
+
+Key = SLA `Name`, value is [libDatabox.SLA](https://github.com/me-box/lib-go-databox/blob/master/types.go#L105)
+
+
 ## Use Cases
 
 ### Platform audit
